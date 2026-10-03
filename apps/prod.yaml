@@ -4,13 +4,17 @@ metadata:
   name: app-prod
   namespace: argocd
 spec:
-  source:
-    repoURL: https://github.com/joue-zero/devops-platform
-    targetRevision: HEAD
-    path: helm/app
-    helm:
-      valueFiles:
-        - https://raw.githubusercontent.com/joue-zero/gitops-config/main/environments/prod/values.yaml
+  project: default
+  sources:
+    - repoURL: https://github.com/joue-zero/devops-platform
+      targetRevision: HEAD
+      path: helm/app
+      helm:
+        valueFiles:
+          - $values/environments/prod/values.yaml
+    - repoURL: https://github.com/joue-zero/gitops-config
+      targetRevision: HEAD
+      ref: values
 
   destination:
     server: https://kubernetes.default.svc
