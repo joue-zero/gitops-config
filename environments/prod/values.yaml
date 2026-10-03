@@ -1,0 +1,19 @@
+image:
+  repository: 921876749389.dkr.ecr.eu-central-1.amazonaws.com/gitops-platform/app
+  tag: latest        # CI updates this — but only after staging is healthy
+
+replicaCount: 3
+
+ingress:
+  enabled: true
+  host: app.devops-platform.com
+  tls: false
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+
+env:
+  NODE_ENV: production
+  PORT: "8080"

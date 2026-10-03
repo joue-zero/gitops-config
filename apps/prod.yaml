@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-prod
+  namespace: argocd
+spec:
+  source:
+    repoURL: https://github.com/joue-zero/devops-platform
+    targetRevision: HEAD
+    path: helm/app
+    helm:
+      valueFiles:
+        - https://raw.githubusercontent.com/joue-zero/gitops-config/main/environments/prod/values.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: prod
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

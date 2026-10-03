@@ -1,0 +1,19 @@
+# This file is the ONLY thing CI changes on each deploy.
+# ArgoCD reads this and renders the Helm chart with these values.
+
+image:
+  repository: 921876749389.dkr.ecr.eu-central-1.amazonaws.com/gitops-platform/app
+  tag: latest        # CI will update this to the git SHA on each push
+
+replicaCount: 1
+
+ingress:
+  enabled: true
+  host: staging.devops-platform.com
+
+autoscaling:
+  enabled: false
+
+env:
+  NODE_ENV: staging
+  PORT: "8080"

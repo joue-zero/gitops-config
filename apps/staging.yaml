@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application              # ArgoCD CRD — not a native K8s object
+metadata:
+  name: app-staging
+  namespace: argocd            # ArgoCD Applications always live in argocd namespace
+spec:
+
+  # ── QUESTION 1: where is desired state? ──────────────
+  source:
+    repoURL: https://github.com/joue-zero/devops-platform
+    targetRevision: HEAD       # always use the latest commit on main
+    path: helm/app             # path inside the repo where Chart.yaml lives
+
+    # How to render: Helm with values override from gitops-config repo
+    helm:
+      valueFiles:
+        - https://raw.githubusercontent.com/joue-zero/gitops-config/main/environments/staging/values.yaml
+
+  # ── QUESTION 3: where to deploy? ─────────────────────
+  destination:
+    server: https://kubernetes.default.svc  # the cluster ArgoCD runs in
+    namespace: staging
+
+  # ── QUESTION 4: when to sync? ────────────────────────
+  syncPolicy:
+    automated:
+      prune: true    # delete resources removed from Git
+      selfHeal: true # revert manual changes to match Git
+    syncOptions:
+      - CreateNamespace=true  # create namespace if it doesn't exist
